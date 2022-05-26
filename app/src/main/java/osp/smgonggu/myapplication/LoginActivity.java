@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             String userid = params[0];
             String passwd = params[1];
 
-            String server_url = "http://15.164.252.136/login.php";
+            String server_url = "https://sunmoongonggu-default-rtdb.firebaseio.com/\n";
 
 
             URL url;

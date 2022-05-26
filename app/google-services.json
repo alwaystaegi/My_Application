@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "696771986144",
+    "project_id": "sunmoongonggu",
+    "storage_bucket": "sunmoongonggu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696771986144:android:6873abcf8e2a39dea00685",
+        "android_client_info": {
+          "package_name": "osp.smgonggu.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "696771986144-1k14ldk20pqcqcdravm13sim8t3k8ccv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "osp.smgonggu.myapplication",
+            "certificate_hash": "3a5ba2a3a29212ed796e672e5ec426a60bbbcef3"
+          }
+        },
+        {
+          "client_id": "696771986144-d7v5qbr580u7prj34g90mbq9ie2apf1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfVcCYPZmCH1d9UJSPBgO7yyEb-hMmUeY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "696771986144-d7v5qbr580u7prj34g90mbq9ie2apf1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
