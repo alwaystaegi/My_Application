@@ -13,7 +13,8 @@ Task 'wrapper' not found in project ':app'.
 같은 오류가 발생하는 것같아요
 
 
-그럴땐 
+그럴땐 bulid.gradle에 
+
 tasks.register("prepareKotlinBuildScriptModel"){}
 
 task wrapper(type: Wrapper) {
