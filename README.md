@@ -5,6 +5,7 @@
 
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 안드로이드 스튜디오에서 다른 사람 프로젝트를 그대로 깃 클론하면 
 
 prepareKotlinBuildScriptModel Task fails in a Java project이나
