@@ -48,7 +48,7 @@ dependencies {
     // ...
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:30.0.0')
+    implementation platform('com.google.firebase:firebase-bom:29.3.1')
 
     // When using the BoM, you don't specify versions in Firebase library dependencies
 
@@ -63,4 +63,5 @@ dependencies {
 
     //구글로그인 구현을 위한 implemetation
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+
 }
