@@ -1,16 +1,24 @@
 package osp.smgonggu.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.*;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,6 +27,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -31,6 +42,9 @@ public class JoinActivity extends AppCompatActivity {
     EditText userid_et, passwd_et;
     Button join_button;
 
+    //firebase에 연결할 함수
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,99 +55,68 @@ public class JoinActivity extends AppCompatActivity {
         passwd_et = findViewById(R.id.passwd_et);
         join_button = findViewById(R.id.join_button);
 
+        //firebase의 인스턴스 초기화
+        mAuth = FirebaseAuth.getInstance();
+
 // 버튼 이벤트 추가
         join_button.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
 // 회원가입 함수 호출
-                JoinTask joinTask = new JoinTask();
-                joinTask.execute(userid_et.getText().toString(), passwd_et.getText().toString());
+                String getUserId = userid_et.getText().toString();
+                String getUserPassword = passwd_et.getText().toString();
+                Toast.makeText(JoinActivity.this, getUserId,
+                        Toast.LENGTH_SHORT).show();
+                createAccount(getUserId,getUserPassword);
+
             }
-        });
-    }
+            });
 
-    class JoinTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            Log.d(TAG, "onPreExecute");
         }
 
 
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+    private void createAccount(String email, String password) {
+        // [START create_user_with_email]
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            String email = user.getEmail();
+                            String uid = user.getUid();
+
+                            //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
+                            HashMap<Object,String> hashMap = new HashMap<>();
+
+                            hashMap.put("uid",uid);
+                            hashMap.put("email",email);
+
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference reference = database.getReference("Users");
+                            reference.child(uid).setValue(hashMap);
 
 
-            Log.d(TAG, "onPostExecute, " + result);
-
-// 결과값이 success 로 나오면
-            if(result.equals("success")){
-
-//토스트 메시지를 뿌리고, 이전 액티비티(LoginActivity) 로 돌아감
-                Toast.makeText(getApplicationContext(), "성공적으로 회원가입 되었습니다.", Toast.LENGTH_SHORT).show();
-                finish();
-            }else
-            {
-                Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String userid = params[0];
-            String passwd = params[1];
-
-            String server_url = "http://15.164.252.136/join.php";
-
-
-            URL url;
-            String response = "";
-            try {
-                url = new URL(server_url);
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("userid", userid)
-                        .appendQueryParameter("passwd", passwd);
-                String query = builder.build().getEncodedQuery();
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-
-                conn.connect();
-                int responseCode=conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    String line;
-                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line=br.readLine()) != null) {
-                        response+=line;
+                            //가입이 이루어져을시 가입 화면을 빠져나감.
+                            Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                            Toast.makeText(JoinActivity.this, "회원가입에 성공하셨습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        //    Toast.makeText(JoinActivity.this, "Authentication failed.",
+                         //           Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
                     }
-                }
-                else {
-                    response="";
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return response;
-        }
+                });
+        // [END create_user_with_email]
     }
-}
+    private void updateUI(FirebaseUser user) {
+
+    }
+    }
+
+

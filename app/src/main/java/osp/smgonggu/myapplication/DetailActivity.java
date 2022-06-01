@@ -217,7 +217,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 for(int i=0;i<jsonArray.length();i++){
 
-// custom_comment 의 디자인을 불러와서 사용
+// custom_comment 의 디자인을 불러와서 사용ㅅ
                     View customView = layoutInflater.inflate(R.layout.custom_comment, null);
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 

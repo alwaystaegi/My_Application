@@ -1,5 +1,6 @@
 package osp.smgonggu.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,6 +12,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,6 +47,9 @@ public class LoginActivity extends AppCompatActivity {
     // 로그에 사용할 TAG 변수 선언
     final private String TAG = getClass().getSimpleName();
 
+    //구글로그인을 하기 위한 함수
+    private FirebaseAuth mAuth = null;
+
     // 사용할 컴포넌트 선언
     EditText userid_et, passwd_et;
     Button login_button, join_button;
@@ -36,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mAuth =  FirebaseAuth.getInstance();
 // 사용할 컴포넌트 초기화
         userid_et = findViewById(R.id.userid_et);
         passwd_et = findViewById(R.id.passwd_et);
@@ -47,8 +71,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 // 로그인 함수
-                LoginTask loginTask = new LoginTask();
-                loginTask.execute(userid_et.getText().toString(), passwd_et.getText().toString());
+               signIn(userid_et.getText().toString(),passwd_et.getText().toString());
             }
         });
 
@@ -63,89 +86,24 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    class LoginTask extends AsyncTask<String, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        private void signIn(String email, String password) {
+            // [START sign_in_with_email]
+            mAuth.signInWithEmailAndPassword(email,password)
+                    .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Intent intent = new Intent(LoginActivity.this, ListActivity.class);
+                                startActivity(intent);
 
-            Log.d(TAG, "onPreExecute");
+                            } else {
+                                Toast.makeText(LoginActivity.this, "로그인 오류", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         }
 
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Log.d(TAG, "onPostExecute, " + result);
-
-            if(result.equals("success")){
-// 결과값이 success 이면
-// 토스트 메시지를 뿌리고
-// userid 값을 가지고 ListActivity 로 이동
-                Toast.makeText(LoginActivity.this, "로그인 되었습니다.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(LoginActivity.this, ListActivity.class);
-                intent.putExtra("userid", userid_et.getText().toString());
-                startActivity(intent);
-            }else
-            {
-                Toast.makeText(LoginActivity.this, result, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String userid = params[0];
-            String passwd = params[1];
-
-            String server_url = "https://sunmoongonggu-default-rtdb.firebaseio.com/\n";
-
-
-            URL url;
-            String response = "";
-            try {
-                url = new URL(server_url);
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("userid", userid)
-                        .appendQueryParameter("passwd", passwd);
-                String query = builder.build().getEncodedQuery();
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-
-                conn.connect();
-                int responseCode=conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    String line;
-                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line=br.readLine()) != null) {
-                        response+=line;
-                    }
-                }
-                else {
-                    response="";
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return response;
-        }
-    }
+                        private void updateUI(FirebaseUser user) {};
 
 }
