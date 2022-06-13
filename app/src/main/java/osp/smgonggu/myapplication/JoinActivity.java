@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +41,7 @@ public class JoinActivity extends AppCompatActivity {
 
     // 사용할 컴포넌트 선언
     EditText userid_et, passwd_et;
+    EditText nick_et;
     Button join_button;
 
     //firebase에 연결할 함수
@@ -53,6 +55,7 @@ public class JoinActivity extends AppCompatActivity {
 // 컴포넌트 초기화
         userid_et = findViewById(R.id.userid_et);
         passwd_et = findViewById(R.id.passwd_et);
+        nick_et = findViewById(R.id.nick_et);
         join_button = findViewById(R.id.join_button);
 
         //firebase의 인스턴스 초기화
@@ -65,10 +68,29 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
 // 회원가입 함수 호출
                 String getUserId = userid_et.getText().toString();
+                String getnick= nick_et.getText().toString();
                 String getUserPassword = passwd_et.getText().toString();
-                Toast.makeText(JoinActivity.this, getUserId,
-                        Toast.LENGTH_SHORT).show();
+
+
+                mAuth=FirebaseAuth.getInstance();
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(getnick)
+                        .build();
+
+                mAuth.getCurrentUser().updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User profile updated.");
+                                }
+                            }
+                        });
+
+
                 createAccount(getUserId,getUserPassword);
+
+
 
             }
             });
@@ -85,18 +107,21 @@ public class JoinActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             String email = user.getEmail();
-                            String uid = user.getUid();
+                            String uid = nick_et.getText().toString();
 
-                            //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
-                            HashMap<Object,String> hashMap = new HashMap<>();
 
-                            hashMap.put("uid",uid);
-                            hashMap.put("email",email);
 
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference reference = database.getReference("Users");
-                            reference.child(uid).setValue(hashMap);
-
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(uid)
+                                    .build();
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                            }
+                                        }
+                                    });
 
                             //가입이 이루어져을시 가입 화면을 빠져나감.
                             Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
