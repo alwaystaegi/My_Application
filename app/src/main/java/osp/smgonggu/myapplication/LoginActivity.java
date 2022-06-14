@@ -39,19 +39,15 @@ public class LoginActivity extends AppCompatActivity {
         passwd_et = findViewById(R.id.passwd_et);
         login_button = findViewById(R.id.login_button);
         join_button = findViewById(R.id.join_button);
+
 // 로그인 버튼 이벤트 추가
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 // 로그인 함수
 
-                //TODO 개발중에만 자동 로그인 되도록 설정할것 후엔 아래 함수로바꾸기
-                signIn("ffff4565@naver.com","taegi1");
+              signIn(userid_et.getText().toString(),passwd_et.getText().toString());}
 
-
-                // signIn("taegi1@naver.com","taegi1");
-              //signIn(userid_et.getText().toString(),passwd_et.getText().toString());
-            }
         });
 
 // 조인 버튼 이벤트 추가

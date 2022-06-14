@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,22 +16,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class JoinActivity extends AppCompatActivity {
 
@@ -40,7 +23,7 @@ public class JoinActivity extends AppCompatActivity {
     final private String TAG = getClass().getSimpleName();
 
     // 사용할 컴포넌트 선언
-    EditText userid_et, passwd_et;
+    EditText userid_et, passwd_et,test_et;
     EditText nick_et;
     Button join_button;
 
@@ -71,32 +54,52 @@ public class JoinActivity extends AppCompatActivity {
                 String getnick= nick_et.getText().toString();
                 String getUserPassword = passwd_et.getText().toString();
 
+                if(getUserId.equals("")) {
+                    Toast.makeText(JoinActivity.this, "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                }
+                    else if(getnick.equals("")) {
+                    Toast.makeText(JoinActivity.this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if(getUserPassword.equals("")) {
+                    Toast.makeText(JoinActivity.this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if(passwordcheck()==false){
+                    Toast.makeText(JoinActivity.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
 
-                mAuth=FirebaseAuth.getInstance();
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(getnick)
-                        .build();
+                }
+                else{
+                    mAuth = FirebaseAuth.getInstance();
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(getnick)
+                            .build();
 
-                mAuth.getCurrentUser().updateProfile(profileUpdates)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "User profile updated.");
+                    mAuth.getCurrentUser().updateProfile(profileUpdates)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "User profile updated.");
+                                    }
                                 }
-                            }
-                        });
+                            });
 
 
-                createAccount(getUserId,getUserPassword);
+                    createAccount(getUserId, getUserPassword);
 
-
+                }
 
             }
             });
 
         }
 
+
+    private boolean passwordcheck(){
+        if(passwd_et.getText().toString().equals(test_et.getText().toString())){
+            return true;
+        }
+        else return false;
+    }
 
     private void createAccount(String email, String password) {
         // [START create_user_with_email]
