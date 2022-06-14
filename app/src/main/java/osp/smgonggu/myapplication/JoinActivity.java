@@ -129,17 +129,12 @@ public class JoinActivity extends AppCompatActivity {
                             finish();
                             Toast.makeText(JoinActivity.this, "회원가입에 성공하셨습니다.", Toast.LENGTH_SHORT).show();
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        //    Toast.makeText(JoinActivity.this, "Authentication failed.",
-                         //           Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                            Toast.makeText(JoinActivity.this, "회원가입에 실패하셨습니다.", Toast.LENGTH_SHORT).show();
+
+
                         }
                     }
                 });
-        // [END create_user_with_email]
-    }
-    private void updateUI(FirebaseUser user) {
 
     }
     }

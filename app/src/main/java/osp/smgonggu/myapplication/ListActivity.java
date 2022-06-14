@@ -42,7 +42,7 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity{
 
     // 로그에 사용할 TAG 변수
     final private String TAG = getClass().getSimpleName();
@@ -62,7 +62,7 @@ public class ListActivity extends AppCompatActivity {
 
     String name;
     String email;
-
+    String seq;
    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +138,6 @@ public class ListActivity extends AppCompatActivity {
     }
 
     //게시물 불러오는 함수
-    //TODO 게시물을 불러오는 데 에 필요한 함수작성(파이어베이스)
     public void getBoard(){
         db.collection("Board")
                 .get()
@@ -153,7 +152,7 @@ public class ListActivity extends AppCompatActivity {
 
                                     String title = document.get("title").toString();
                                     String uid = document.get("uid").toString();
-                                    String seq = document.get("index").toString();
+                                    seq = document.get("index").toString();
                                     titleList.add(title);
                                     seqList.add(seq);
                                     ArrayAdapter arrayAdapter = new ArrayAdapter<String>(ListActivity.this, android.R.layout.simple_list_item_1, titleList);
