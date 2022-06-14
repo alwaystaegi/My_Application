@@ -7,10 +7,10 @@ public class Board {
     private String UID;
     private String title;
     private String content;
-    private int index;
+    private String index;
     public Board() {}
 
-    public Board(String UID,String title,String content,int index) {
+    public Board(String UID,String title,String content,String index) {
         this.UID=UID;
         this.title=title;
         this.content=content;
@@ -27,5 +27,8 @@ public class Board {
 
     public String getContent() {
         return content;
+    }
+    public String getIndex() {
+        return index;
     }
 }

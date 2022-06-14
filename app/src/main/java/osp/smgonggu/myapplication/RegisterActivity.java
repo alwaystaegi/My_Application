@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     TextView textview;
     Button getidx;//야매용 버튼... 전역변수의 의미로 사용할 예정 index를 얻어오는데 사용함
     // 유저아이디 변수
-    String email;
+    String nick;
     String title;
     String content;
     Bitmap thumbnail;
@@ -94,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
         //현재 로그인한 유저의 정보 가져오기
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-    email= user.getEmail();
+    nick= user.getDisplayName();
 
         imageview.setOnClickListener(v -> {
             Intent intent = new Intent();
@@ -122,7 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
                     title = title_et.getText().toString();
                     thumbnail = ((BitmapDrawable) imageview.getDrawable()).getBitmap();
                     content = content_et.getText().toString();
-                    regboard(email, title, thumbnail, content);
+                    regboard(nick, title, thumbnail, content);
                 }
             }
         });
@@ -153,10 +153,9 @@ public class RegisterActivity extends AppCompatActivity {
     public void regboard(String uid, String title, Bitmap thumbnail,String content) {
         getIndex();
 
-        int index= Integer.parseInt(getidx.getText().toString())+1;
+        String index= Integer.toString(Integer.parseInt(getidx.getText().toString())+1);
         Board board = new Board(uid, title, content,index);
-        uploadImg(thumbnail,index);//이미지 등록함수
-        Toast.makeText(RegisterActivity.this, index, Toast.LENGTH_SHORT).show();
+        //uploadImg(thumbnail,index);//이미지 등록함수
         db.collection("Board").add(board);
         Intent intent = new Intent(RegisterActivity.this, ListActivity.class);
         Toast.makeText(RegisterActivity.this, "등록되었습니다.", Toast.LENGTH_SHORT).show();
@@ -172,7 +171,6 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            int i=0;
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
                                 getidx.setText(document.get("index").toString());

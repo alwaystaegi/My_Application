@@ -99,14 +99,11 @@ public class ListActivity extends AppCompatActivity{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-// 어떤 값을 선택했는지 토스트를 뿌려줌
-                Toast.makeText(ListActivity.this, adapterView.getItemAtPosition(i)+ " 클릭", Toast.LENGTH_SHORT).show();
 
 // 게시물의 번호와 userid를 가지고 DetailActivity 로 이동
                 Intent intent = new Intent(ListActivity.this, DetailActivity.class);
                 intent.putExtra("board_seq", seqList.get(i));
-                intent.putExtra("userid", name);
-                Toast.makeText(ListActivity.this,name, Toast.LENGTH_SHORT).show();
+                intent.putExtra("title", titleList.get(i));
                 startActivity(intent);
 
             }

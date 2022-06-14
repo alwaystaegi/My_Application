@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 String a= mAuth.getCurrentUser().getDisplayName();
                                 Toast.makeText(LoginActivity.this,a+"님 환영합니다.",Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, ListActivity.class);
                                 startActivity(intent);
 
                             } else {
